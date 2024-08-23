@@ -59,7 +59,7 @@ class LiftController {
             const floorDiv = document.createElement('div');
             floorDiv.classList.add('floor');
             floorDiv.dataset.floor = i;
-            let buttonsHtml = `<p>Floor ${i}</p><div class="buttons">`;
+            let buttonsHtml = `<div class="buttons"><p>Floor ${i}</p>`;
             if (i < numFloors - 1) {
                 buttonsHtml += `<button onclick="liftController.callLift(${i}, 'moving_up')">Up</button>`;
             }
@@ -145,8 +145,16 @@ class LiftController {
     }
 }
 function initBuilding() {
-    const floorCount = parseInt(document.getElementById('floors').value);
-    const liftCount = parseInt(document.getElementById('lifts').value);
+    let floorCount = parseInt(document.getElementById('floors').value);
+    if(floorCount<1) {
+        floorCount = 1;
+        console.error("Floor count must be greater than 0");
+    }    
+    let liftCount = parseInt(document.getElementById('lifts').value);
+    if(liftCount<1){
+        liftCount = 1;
+        console.error("Lift count must be greater than 0");
+    }
     liftController = new LiftController(liftCount, floorCount);
 }
 
