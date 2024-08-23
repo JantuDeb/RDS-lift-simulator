@@ -75,6 +75,7 @@ body {
       gap: 0.5rem;
 
       & button {
+        width: 4rem;
         padding: 0.25rem 0.5rem;
         border-radius: 0.25rem;
         background-color: #0f172a;

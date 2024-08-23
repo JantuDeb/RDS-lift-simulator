@@ -59,12 +59,16 @@ class LiftController {
             const floorDiv = document.createElement('div');
             floorDiv.classList.add('floor');
             floorDiv.dataset.floor = i;
-            floorDiv.innerHTML = `
-            <div class="buttons">
-            <button onclick="liftController.callLift(${i}, 'moving_up')">Up</button>
-            <button onclick="liftController.callLift(${i}, 'moving_down')">Down</button>
-            </div>
-                `;
+            let buttonsHtml = `<p>Floor ${i}</p><div class="buttons">`;
+            if (i < numFloors - 1) {
+                buttonsHtml += `<button onclick="liftController.callLift(${i}, 'moving_up')">Up</button>`;
+            }
+            if (i > 0) {
+                buttonsHtml += `<button onclick="liftController.callLift(${i}, 'moving_down')">Down</button>`;
+            }
+            buttonsHtml += `</div>`;
+
+            floorDiv.innerHTML = buttonsHtml;
             this.building.appendChild(floorDiv);
             this.floors.push(floorDiv);
         }
