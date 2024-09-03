@@ -2,7 +2,9 @@ class Lift {
     constructor(id) {
         this.id = id;
         this.currentFloor = 0;
+        this.targetFloor = null;
         this.status = 'idle'; //idle, moving_up, moving_down
+        this.direction = null; //up, down
         this.element = this.createLiftElement();
     }
 
@@ -26,8 +28,18 @@ class Lift {
         this.currentFloor = floor;
     }
 
+    updateTargetFloor(floor) {
+        this.targetFloor = floor;
+    }
+
     setStatus(status) {
+        if (status === "idle") {
+            this.direction = null
+        }
         this.status = status;
+    }
+    setDirection(direction) {
+        this.direction = direction
     }
 }
 
@@ -61,10 +73,10 @@ class LiftController {
             floorDiv.dataset.floor = i;
             let buttonsHtml = `<div class="buttons"><p>Floor ${i}</p>`;
             if (i < numFloors - 1) {
-                buttonsHtml += `<button onclick="liftController.callLift(${i}, 'moving_up')">Up</button>`;
+                buttonsHtml += `<button onclick="liftController.callLift(${i}, 'up')">Up</button>`;
             }
             if (i > 0) {
-                buttonsHtml += `<button onclick="liftController.callLift(${i}, 'moving_down')">Down</button>`;
+                buttonsHtml += `<button onclick="liftController.callLift(${i}, 'down')">Down</button>`;
             }
             buttonsHtml += `</div>`;
 
@@ -75,18 +87,26 @@ class LiftController {
     }
 
     callLift(targetFloor, direction) {
+        if (this.checkIfLiftMovingToTargetFloor(targetFloor, direction)) return
         const availableLift = this.findNearestAvailableLift(targetFloor, direction);
         if (availableLift) {
-            this.moveLift(availableLift, targetFloor);
-        } else {
-            const alreadyInQueue = this.requestQueue.some(
-                request => request.targetFloor === targetFloor && request.direction === direction
-            );
+            this.moveLift(availableLift, targetFloor, direction);
+        } else this.checkAndrequestQueues(targetFloor, direction)
+    }
 
-            if (!alreadyInQueue) {
-                this.requestQueue.push({ targetFloor, direction });
-            }
+    checkAndrequestQueues(targetFloor, direction) {
+        const alreadyInQueue = this.requestQueue.some(
+            request => request.targetFloor === targetFloor && request.direction === direction
+        );
+
+        if (!alreadyInQueue) {
+            this.requestQueue.push({ targetFloor, direction });
         }
+    }
+    checkIfLiftMovingToTargetFloor(targetFloor, direction) {
+        const lift = this.lifts.find(lift => lift.targetFloor === targetFloor && lift.direction === direction)
+        console.log(lift)
+        return lift ? true : false
     }
 
     findNearestAvailableLift(targetFloor, direction) {
@@ -102,17 +122,18 @@ class LiftController {
                 }
             }
         }
-
         return closestLift;
     }
 
-    moveLift(lift, targetFloor) {
+    moveLift(lift, targetFloor, direction) {
         const status = targetFloor > lift.currentFloor ? "moving_up" : "moving_down";
-        lift.setStatus(status);
+        lift.status = status
+        lift.targetFloor = targetFloor
+        lift.direction = direction
         const timeToReach = Math.abs(targetFloor - lift.currentFloor) * 2000;
         this.updateLiftPositions(lift, targetFloor, timeToReach);
         setTimeout(() => {
-            lift.updateFloor(targetFloor);
+            lift.currentFloor = targetFloor
             this.openAndCloseDoors(lift);
         }, timeToReach);
     }
@@ -131,7 +152,9 @@ class LiftController {
             liftElement.classList.add('door-close');
             setTimeout(() => {
                 liftElement.classList.remove('door-close');
-                lift.setStatus("idle");
+                lift.status = "idle"
+                lift.direction = null
+                lift.targetFloor = null
                 this.processQueue(); // Check and process the queue when a lift becomes idle
             }, 2500); // 2.5 seconds for the doors to fully close
         }, 2500); // 2.5 seconds for the doors to stay open
@@ -146,12 +169,12 @@ class LiftController {
 }
 function initBuilding() {
     let floorCount = parseInt(document.getElementById('floors').value);
-    if(floorCount<1) {
+    if (floorCount < 1) {
         floorCount = 1;
         console.error("Floor count must be greater than 0");
-    }    
+    }
     let liftCount = parseInt(document.getElementById('lifts').value);
-    if(liftCount<1){
+    if (liftCount < 1) {
         liftCount = 1;
         console.error("Lift count must be greater than 0");
     }
