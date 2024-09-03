@@ -1,3 +1,9 @@
+const building = document.getElementById('controls');
+building.addEventListener("submit", (e) => {
+    console.log(e)
+    e.preventDefault();
+    initBuilding()
+})
 class Lift {
     constructor(id) {
         this.id = id;
@@ -45,6 +51,7 @@ class Lift {
 
 class LiftController {
     building = document.getElementById('building');
+
     constructor(numLifts, numFloors) {
         this.lifts = [];
         this.floors = [];
@@ -183,7 +190,7 @@ function initBuilding() {
 
 let liftController;
 
-initBuilding();
+// initBuilding();
 
 
 
