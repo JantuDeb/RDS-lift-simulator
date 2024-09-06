@@ -128,13 +128,16 @@ body {
 
 .door-open .left-door {
   transform: translateX(-100%);
+  background-color: darkolivegreen;
 }
 
 .door-open .right-door {
   transform: translateX(100%);
+  background-color: darkolivegreen;
 }
 
 .door-close .left-door,
 .door-close .right-door {
   transform: translateX(0);
+  background-color: darkred;
 }
