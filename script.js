@@ -59,14 +59,14 @@ class LiftController {
         this.building.replaceChildren()
         this.initFloors(numFloors);
         this.initLifts(numLifts);
-        this.building.style.width = numLifts * 100 + 'px';
+        this.building.style.width = (numLifts * 100 + 100 /*for buttons */) + 'px';
     }
 
     initLifts(numLifts) {
         for (let i = 0; i < numLifts; i++) {
             const lift = new Lift(i);
             this.lifts.push(lift);
-            lift.element.style.left = i * 100 + 'px';
+            lift.element.style.left =( i * 100 + 100) + 'px';
             this.building.appendChild(lift.element);
         }
     }
