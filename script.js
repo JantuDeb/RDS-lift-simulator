@@ -59,7 +59,7 @@ class LiftController {
         this.building.replaceChildren()
         this.initFloors(numFloors);
         this.initLifts(numLifts);
-        this.building.style.width = numLifts * 150 + 'px';
+        this.building.style.width = numLifts * 100 + 'px';
     }
 
     initLifts(numLifts) {
